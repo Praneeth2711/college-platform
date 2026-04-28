@@ -1,4 +1,5 @@
 // Predictor logic - rule-based college suggestions from exam + rank
+
 export interface PredictionInput {
   exam: string;
   rank: number;
@@ -49,8 +50,61 @@ export const predictionRules: PredictionRule[] = [
   { exam: "State CET", minRank: 5001, maxRank: 20000, collegeTypes: ["Private"], minRating: 3.5 },
 ];
 
+// 🔍 Find matching rule
 export function findMatchingRule(exam: string, rank: number): PredictionRule | null {
-  return predictionRules.find(
-    (rule) => rule.exam === exam && rank >= rule.minRank && rank <= rule.maxRank
-  ) || null;
+  return (
+    predictionRules.find(
+      (rule) => rule.exam === exam && rank >= rule.minRank && rank <= rule.maxRank
+    ) || null
+  );
+}
+
+/////////////////////////////////////////////////////////
+// 🚀 NEW: MATCH STRENGTH (BEST / GOOD / REACH)
+/////////////////////////////////////////////////////////
+
+export function getMatchType(rank: number, rule: PredictionRule) {
+  const rangeSize = rule.maxRank - rule.minRank;
+  const position = rank - rule.minRank;
+
+  const ratio = position / rangeSize;
+
+  if (ratio <= 0.3) return "best";   // top 30% of range
+  if (ratio <= 0.7) return "good";   // mid range
+  return "reach";                   // lower edge
+}
+
+/////////////////////////////////////////////////////////
+// 🧠 NEW: RECOMMENDATION REASON (THIS IS THE WOW)
+/////////////////////////////////////////////////////////
+
+export function getRecommendationReason(
+  exam: string,
+  rank: number,
+  college: any,
+  rule: PredictionRule
+) {
+  const matchType = getMatchType(rank, rule);
+
+  if (matchType === "best") {
+    return `🔥 Strong match: Your rank (${rank}) is in the top range for ${exam}, aligning with high placement (${college.placementPercentage}%) and top ratings.`;
+  }
+
+  if (matchType === "good") {
+    return `⭐ Good fit: Your rank (${rank}) comfortably falls within this college’s admission range with solid placement outcomes.`;
+  }
+
+  return `⚠️ Reach option: Slightly competitive for your rank (${rank}), but possible based on trends and preferences.`;
+}
+
+/////////////////////////////////////////////////////////
+// ⭐ OPTIONAL: LABEL FOR UI BADGE
+/////////////////////////////////////////////////////////
+
+export function getMatchLabel(rank: number, rule: PredictionRule) {
+  const type = getMatchType(rank, rule);
+
+  if (type === "best") return "⭐ Best Match";
+  if (type === "good") return "👍 Good Fit";
+  return "⚠️ Reach";
 }
