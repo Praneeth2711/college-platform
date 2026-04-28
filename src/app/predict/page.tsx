@@ -82,11 +82,16 @@ export default function PredictPage() {
           <select
             value={exam}
             onChange={(e) => setExam(e.target.value)}
-            className="w-full glass rounded-xl px-4 py-3 text-white"
+            className="w-full glass rounded-xl px-4 py-3 text-white bg-transparent outline-none"
           >
-            <option value="">Choose exam</option>
+            <option value="" className="text-black bg-white">
+              Choose exam
+            </option>
+
             {exams.map((e) => (
-              <option key={e}>{e}</option>
+              <option key={e} value={e} className="text-black bg-white">
+                {e}
+              </option>
             ))}
           </select>
 
