@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎓 CampusLens — College Discovery & Decision Platform
 
-## Getting Started
+A **production-grade, full-stack** college discovery platform built with a **premium glassmorphism UI**. Discover colleges, compare options side-by-side, and predict admissions based on your exam rank.
 
-First, run the development server:
+## ✨ Features
 
+- 🔍 **College Discovery** — Search, filter by location/fees, paginated grid
+- 🏫 **College Details** — Animated tab UI with Overview, Courses, Placements
+- ⚖️ **Compare Colleges** — Side-by-side comparison with best-value highlights
+- 🧠 **Predictor Tool** — Rule-based college prediction from exam + rank
+- 🎨 **Premium UI** — Glassmorphism, dark gradients, micro-animations
+- 📱 **Fully Responsive** — Mobile-first design
+
+## 🧠 Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | Next.js 16 (App Router) + TypeScript |
+| Styling | Tailwind CSS v4 + Framer Motion (motion) |
+| Database | PostgreSQL 18 + Prisma v7 ORM |
+| Runtime | Node.js v22 |
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js v18+
+- PostgreSQL installed and running
+- npm
+
+### 1. Clone & Install
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repo-url>
+cd unstop
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Configure Environment
+```bash
+cp .env.example .env
+# Edit .env with your PostgreSQL credentials:
+# DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@localhost:5432/college_platform"
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Create Database
+```bash
+psql -U postgres -c "CREATE DATABASE college_platform;"
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Push Schema & Seed Data
+```bash
+npx prisma db push
+npx prisma generate
+npx prisma db seed
+```
 
-## Learn More
+### 5. Run Dev Server
+```bash
+npm run dev
+# Open http://localhost:3000
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 📡 API Endpoints
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/colleges` | List colleges (search, filter, pagination) |
+| GET | `/api/colleges/:id` | Single college with courses |
+| POST | `/api/compare` | Compare 2-3 colleges by IDs |
+| POST | `/api/predict` | Predict colleges from exam + rank |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Query Parameters (GET /api/colleges)
+- `search` — Search by name, city, state
+- `location` — Filter by state/city
+- `minFees` / `maxFees` — Fee range filter
+- `page` / `limit` — Pagination
 
-## Deploy on Vercel
+## 📁 Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+├── prisma/
+│   ├── schema.prisma      # Database schema
+│   └── seed.ts            # 25 realistic colleges seed
+├── src/
+│   ├── app/
+│   │   ├── api/           # API routes
+│   │   ├── college/[id]/  # Detail page
+│   │   ├── compare/       # Compare page
+│   │   ├── predict/       # Predictor page
+│   │   ├── globals.css    # Design system
+│   │   ├── layout.tsx     # Root layout
+│   │   └── page.tsx       # Home page
+│   ├── components/        # Reusable UI components
+│   └── lib/
+│       ├── prisma.ts      # DB client singleton
+│       └── predictor.ts   # Prediction engine
+├── .env.example
+├── prisma.config.ts
+└── package.json
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚀 Deployment
+
+### Frontend (Vercel)
+1. Push to GitHub
+2. Import in [Vercel](https://vercel.com)
+3. Set `DATABASE_URL` environment variable
+4. Deploy
+
+### Database (Railway/Render)
+1. Create a PostgreSQL instance on [Railway](https://railway.app) or [Render](https://render.com)
+2. Copy the connection string to your Vercel env vars
+3. Run `npx prisma db push && npx prisma db seed` against the production DB
+
+## 📜 License
+
+MIT

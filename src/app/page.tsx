@@ -1,65 +1,171 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect, useCallback } from "react";
+import { motion } from "motion/react";
+import { useRouter } from "next/navigation";
+import CollegeCard from "@/components/CollegeCard";
+import SkeletonCard from "@/components/SkeletonCard";
+import SearchBar from "@/components/SearchBar";
+import FilterPanel from "@/components/FilterPanel";
+import CompareSelector from "@/components/CompareSelector";
+
+interface College {
+  id: number;
+  name: string;
+  location: string;
+  city: string;
+  state: string;
+  fees: number;
+  rating: number;
+  placementPercentage: number;
+  type: string;
+  establishedYear: number;
+  description: string;
+}
+
+interface ApiResponse {
+  colleges: College[];
+  pagination: { page: number; limit: number; total: number; totalPages: number };
+}
+
+export default function HomePage() {
+  const router = useRouter();
+  const [colleges, setColleges] = useState<College[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [location, setLocation] = useState("");
+  const [minFees, setMinFees] = useState("");
+  const [maxFees, setMaxFees] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [compareIds, setCompareIds] = useState<number[]>([]);
+
+  const fetchColleges = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      if (location) params.set("location", location);
+      if (minFees) params.set("minFees", minFees);
+      if (maxFees) params.set("maxFees", maxFees);
+      params.set("page", String(page));
+      params.set("limit", "12");
+
+      const res = await fetch(`/api/colleges?${params}`);
+      const data: ApiResponse = await res.json();
+      setColleges(data.colleges);
+      setTotalPages(data.pagination.totalPages);
+      setTotal(data.pagination.total);
+    } catch (err) {
+      console.error("Failed to fetch colleges:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [search, location, minFees, maxFees, page]);
+
+  useEffect(() => {
+    const timer = setTimeout(fetchColleges, 300);
+    return () => clearTimeout(timer);
+  }, [fetchColleges]);
+
+  const toggleCompare = (id: number) => {
+    setCompareIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : prev.length < 3 ? [...prev, id] : prev
+    );
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+      {/* Hero */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-12 sm:py-16">
+        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight">
+          Find Your <span className="bg-gradient-to-r from-violet-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">Dream College</span>
+        </motion.h1>
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
+          className="text-white/50 text-base sm:text-lg max-w-2xl mx-auto mb-8">
+          Discover, compare, and decide — all in one place. Explore {total > 0 ? total : "25"}+ top colleges across India.
+        </motion.p>
+        <SearchBar value={search} onChange={(v) => { setSearch(v); setPage(1); }} />
+      </motion.div>
+
+      {/* Filters */}
+      <div className="mb-8">
+        <FilterPanel
+          location={location}
+          onLocationChange={(v) => { setLocation(v); setPage(1); }}
+          minFees={minFees}
+          onMinFeesChange={(v) => { setMinFees(v); setPage(1); }}
+          maxFees={maxFees}
+          onMaxFeesChange={(v) => { setMaxFees(v); setPage(1); }}
+          onReset={() => { setLocation(""); setMinFees(""); setMaxFees(""); setPage(1); }}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+      </div>
+
+      {/* Results Count */}
+      {!loading && (
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-white/40 text-sm mb-6">
+          Showing {colleges.length} of {total} colleges
+        </motion.p>
+      )}
+
+      {/* Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {loading
+          ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
+          : colleges.map((college, i) => (
+              <CollegeCard
+                key={college.id}
+                college={college}
+                index={i}
+                isSelected={compareIds.includes(college.id)}
+                onCompareToggle={toggleCompare}
+                onViewDetails={(id) => router.push(`/college/${id}`)}
+              />
+            ))}
+      </div>
+
+      {/* Empty State */}
+      {!loading && colleges.length === 0 && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-20">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/5 flex items-center justify-center">
+            <svg className="w-10 h-10 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <h3 className="text-white/60 text-lg font-medium mb-2">No colleges found</h3>
+          <p className="text-white/30 text-sm">Try adjusting your search or filters</p>
+        </motion.div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && !loading && (
+        <div className="flex items-center justify-center gap-2 mt-10">
+          <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
+            className="px-4 py-2 rounded-xl glass text-sm text-white/70 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+            Previous
+          </button>
+          {Array.from({ length: totalPages }).map((_, i) => (
+            <button key={i} onClick={() => setPage(i + 1)}
+              className={`w-9 h-9 rounded-xl text-sm font-medium transition-all ${page === i + 1 ? "bg-violet-600 text-white" : "glass text-white/50 hover:text-white/80"}`}>
+              {i + 1}
+            </button>
+          ))}
+          <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+            className="px-4 py-2 rounded-xl glass text-sm text-white/70 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+            Next
+          </button>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      )}
+
+      {/* Compare Bar */}
+      <CompareSelector
+        selectedIds={compareIds}
+        colleges={colleges}
+        onRemove={(id) => setCompareIds((prev) => prev.filter((x) => x !== id))}
+        onClear={() => setCompareIds([])}
+      />
     </div>
   );
 }
