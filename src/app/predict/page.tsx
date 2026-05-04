@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import Link from "next/link";
 
 interface College {
@@ -64,34 +64,27 @@ export default function PredictPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-16">
-
       {/* Title */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">
-          College <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">Predictor</span>
+        <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3">
+          College <span className="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">Predictor</span>
         </h1>
-        <p className="text-white/40 text-sm">
+        <p className="text-slate-500 text-sm">
           Enter your exam and rank to discover colleges you can get into
         </p>
       </motion.div>
 
       {/* Form */}
-      <motion.div className="glass rounded-2xl p-6 sm:p-8 mb-8 max-w-xl mx-auto">
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass rounded-2xl p-6 sm:p-8 mb-8 max-w-xl mx-auto">
         <div className="space-y-4">
-
           <select
             value={exam}
             onChange={(e) => setExam(e.target.value)}
-            className="w-full glass rounded-xl px-4 py-3 text-white bg-transparent outline-none"
+            className="w-full glass rounded-xl px-4 py-3 text-slate-800 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
           >
-            <option value="" className="text-black bg-white">
-              Choose exam
-            </option>
-
+            <option value="" className="bg-white text-slate-500">Choose exam</option>
             {exams.map((e) => (
-              <option key={e} value={e} className="text-black bg-white">
-                {e}
-              </option>
+              <option key={e} value={e} className="bg-white text-slate-800">{e}</option>
             ))}
           </select>
 
@@ -100,79 +93,49 @@ export default function PredictPage() {
             value={rank}
             onChange={(e) => setRank(e.target.value)}
             placeholder="Enter your rank"
-            className="w-full glass rounded-xl px-4 py-3 text-white"
+            className="w-full glass rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
           />
 
-          {error && <p className="text-red-400 text-xs">{error}</p>}
+          {error && <p className="text-red-500 text-xs">{error}</p>}
 
           <button
             onClick={handlePredict}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 text-white"
+            disabled={loading}
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-medium hover:shadow-lg hover:shadow-indigo-500/20 active:scale-[0.98] transition-all disabled:opacity-60"
           >
             {loading ? "Analyzing..." : "Find Your Best Colleges 🚀"}
           </button>
         </div>
       </motion.div>
 
-      {/* RESULTS */}
+      {/* Results */}
       {result && (
         <div>
-
-          {/* Summary */}
           <div className="glass rounded-2xl p-5 mb-6 text-center">
-            <p className="text-white/50 text-sm">{result.message}</p>
+            <p className="text-slate-600 text-sm">{result.message}</p>
           </div>
 
-          {/* Colleges */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
             {result.colleges.map((college, i) => (
-              <motion.div
-                key={college.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.07 }}
-              >
-
-                <Link
-                  href={`/college/${college.id}`}
-                  className="relative block glass rounded-2xl p-5 hover:scale-105 transition-all"
-                >
-
-                  {/* ⭐ Badge */}
-                  <span className="absolute top-3 right-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] px-2 py-1 rounded-full">
+              <motion.div key={college.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
+                <Link href={`/college/${college.id}`}
+                  className="relative block glass rounded-2xl p-5 hover:scale-[1.02] hover:shadow-lg hover:shadow-slate-200/50 transition-all">
+                  <span className="absolute top-3 right-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-[10px] px-2 py-1 rounded-full shadow-sm">
                     ⭐ Best Match
                   </span>
-
-                  {/* Title */}
-                  <h3 className="text-white font-semibold text-sm">
-                    {college.name}
-                  </h3>
-
-                  <p className="text-white/40 text-xs mb-2">
-                    {college.location}
-                  </p>
-
-                  {/* Stats */}
+                  <h3 className="text-slate-900 font-semibold text-sm">{college.name}</h3>
+                  <p className="text-slate-500 text-xs mb-3">{college.location}</p>
                   <div className="grid grid-cols-3 gap-2">
-                    <div className="text-yellow-400 text-xs">⭐ {college.rating}</div>
-                    <div className="text-white text-xs">
-                      ₹{(college.fees / 100000).toFixed(1)}L
-                    </div>
-                    <div className="text-emerald-400 text-xs">
-                      {college.placementPercentage}%
-                    </div>
+                    <div className="text-amber-600 text-xs font-medium">⭐ {college.rating}</div>
+                    <div className="text-slate-700 text-xs font-medium">₹{(college.fees / 100000).toFixed(1)}L</div>
+                    <div className="text-emerald-600 text-xs font-medium">{college.placementPercentage}%</div>
                   </div>
-
-                  {/* 🧠 Reason */}
-                  <p className="text-xs text-white/50 italic mt-2">
-                    Based on your rank {result.rank}, this college is a strong fit with good placement trends.
+                  <p className="text-xs text-slate-500 italic mt-2">
+                    Based on your rank {result.rank}, this college is a strong fit.
                   </p>
-
                 </Link>
               </motion.div>
             ))}
-
           </div>
         </div>
       )}

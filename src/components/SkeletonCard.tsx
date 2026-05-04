@@ -12,7 +12,7 @@ export default function SkeletonCard() {
       </div>
       <div className="grid grid-cols-3 gap-3 mb-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white/[0.03] rounded-xl p-2.5">
+          <div key={i} className="bg-slate-50/80 rounded-xl p-2.5">
             <div className="skeleton h-2.5 w-10 mx-auto mb-1.5" />
             <div className="skeleton h-4 w-12 mx-auto" />
           </div>
@@ -21,6 +21,7 @@ export default function SkeletonCard() {
       <div className="flex gap-2">
         <div className="skeleton h-9 flex-1 rounded-xl" />
         <div className="skeleton h-9 w-24 rounded-xl" />
+        <div className="skeleton h-9 w-9 rounded-xl" />
       </div>
     </div>
   );

@@ -52,11 +52,11 @@ export default function FilterPanel({
         onChange={(e) =>
           onLocationChange(e.target.value === "All Locations" ? "" : e.target.value)
         }
-        className="glass rounded-xl px-3.5 py-2.5 text-sm text-white/80 bg-transparent outline-none cursor-pointer hover:bg-white/[0.08] transition-colors appearance-none min-w-[150px]"
+        className="glass rounded-xl px-3.5 py-2.5 text-sm text-slate-700 bg-transparent outline-none cursor-pointer hover:bg-white/90 focus:ring-2 focus:ring-indigo-500/20 transition-all appearance-none min-w-[150px]"
         id="location-filter"
       >
         {locations.map((loc) => (
-          <option key={loc} value={loc} className="bg-gray-900 text-white">
+          <option key={loc} value={loc} className="bg-white text-slate-800">
             {loc}
           </option>
         ))}
@@ -69,16 +69,16 @@ export default function FilterPanel({
           value={minFees}
           onChange={(e) => onMinFeesChange(e.target.value)}
           placeholder="Min ₹"
-          className="glass rounded-xl px-3 py-2.5 text-sm text-white/80 bg-transparent outline-none w-24 placeholder-white/30 focus:border-violet-500/40 transition-colors"
+          className="glass rounded-xl px-3 py-2.5 text-sm text-slate-700 bg-transparent outline-none w-24 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all"
           id="min-fees-filter"
         />
-        <span className="text-white/30 text-sm">—</span>
+        <span className="text-slate-300 text-sm">—</span>
         <input
           type="number"
           value={maxFees}
           onChange={(e) => onMaxFeesChange(e.target.value)}
           placeholder="Max ₹"
-          className="glass rounded-xl px-3 py-2.5 text-sm text-white/80 bg-transparent outline-none w-24 placeholder-white/30 focus:border-violet-500/40 transition-colors"
+          className="glass rounded-xl px-3 py-2.5 text-sm text-slate-700 bg-transparent outline-none w-24 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all"
           id="max-fees-filter"
         />
       </div>
@@ -89,7 +89,7 @@ export default function FilterPanel({
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           onClick={onReset}
-          className="px-3 py-2.5 rounded-xl text-xs font-medium text-white/50 hover:text-white/80 hover:bg-white/5 transition-colors"
+          className="px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-600 hover:bg-slate-100/80 transition-colors"
         >
           Reset filters
         </motion.button>

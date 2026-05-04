@@ -10,9 +10,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "CampusLens — Discover Your Perfect College",
+  title: "CampusLens — Discover, Compare, Decide",
   description:
-    "AI-powered college discovery platform. Compare colleges, predict admissions, and make informed decisions about your future education.",
+    "Decision-focused college discovery platform. Compare colleges side-by-side, highlight best values, and make informed decisions about your education.",
   keywords: "college, university, admission, compare, predictor, engineering, India",
 };
 
@@ -22,8 +22,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} antialiased`}>
-      <body className="min-h-screen flex flex-col font-sans relative">
+    <html lang="en" className={`${inter.variable}`}>
+      <body className="min-h-screen flex flex-col font-sans relative text-slate-900">
         <Navbar />
         <main className="flex-1 relative z-10 pt-20">{children}</main>
       </body>

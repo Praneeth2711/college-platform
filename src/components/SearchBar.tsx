@@ -21,7 +21,7 @@ export default function SearchBar({
     >
       <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
         <svg
-          className="w-5 h-5 text-white/30"
+          className="w-5 h-5 text-slate-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -39,13 +39,13 @@ export default function SearchBar({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full py-3.5 pl-12 pr-4 rounded-2xl glass text-white placeholder-white/30 text-sm outline-none focus:border-violet-500/40 focus:bg-white/[0.08] focus:shadow-lg focus:shadow-violet-500/10 transition-all duration-300"
+        className="w-full py-3.5 pl-12 pr-4 rounded-2xl glass text-slate-900 placeholder-slate-400 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-200 focus:bg-white/90 transition-all duration-300"
         id="search-input"
       />
       {value && (
         <button
           onClick={() => onChange("")}
-          className="absolute inset-y-0 right-0 pr-4 flex items-center text-white/30 hover:text-white/60 transition-colors"
+          className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

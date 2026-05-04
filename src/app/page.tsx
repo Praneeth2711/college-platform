@@ -80,11 +80,11 @@ export default function HomePage() {
       {/* Hero */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-12 sm:py-16">
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-tight">
-          Find Your <span className="bg-gradient-to-r from-violet-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">Dream College</span>
+          className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-4 tracking-tight">
+          Find Your <span className="bg-gradient-to-r from-indigo-500 via-indigo-600 to-purple-500 bg-clip-text text-transparent">Dream College</span>
         </motion.h1>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-          className="text-white/50 text-base sm:text-lg max-w-2xl mx-auto mb-8">
+          className="text-slate-500 text-base sm:text-lg max-w-2xl mx-auto mb-8">
           Discover, compare, and decide — all in one place. Explore {total > 0 ? total : "25"}+ top colleges across India.
         </motion.p>
         <SearchBar value={search} onChange={(v) => { setSearch(v); setPage(1); }} />
@@ -105,7 +105,7 @@ export default function HomePage() {
 
       {/* Results Count */}
       {!loading && (
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-white/40 text-sm mb-6">
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-slate-400 text-sm mb-6">
           Showing {colleges.length} of {total} colleges
         </motion.p>
       )}
@@ -129,13 +129,13 @@ export default function HomePage() {
       {/* Empty State */}
       {!loading && colleges.length === 0 && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-20">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/5 flex items-center justify-center">
-            <svg className="w-10 h-10 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-slate-100 flex items-center justify-center">
+            <svg className="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          <h3 className="text-white/60 text-lg font-medium mb-2">No colleges found</h3>
-          <p className="text-white/30 text-sm">Try adjusting your search or filters</p>
+          <h3 className="text-slate-700 text-lg font-medium mb-2">No colleges found</h3>
+          <p className="text-slate-400 text-sm max-w-xs mx-auto">Try adjusting your search or filters to discover colleges that match your preferences</p>
         </motion.div>
       )}
 
@@ -143,17 +143,17 @@ export default function HomePage() {
       {totalPages > 1 && !loading && (
         <div className="flex items-center justify-center gap-2 mt-10">
           <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
-            className="px-4 py-2 rounded-xl glass text-sm text-white/70 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+            className="px-4 py-2 rounded-xl glass text-sm text-slate-600 hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
             Previous
           </button>
           {Array.from({ length: totalPages }).map((_, i) => (
             <button key={i} onClick={() => setPage(i + 1)}
-              className={`w-9 h-9 rounded-xl text-sm font-medium transition-all ${page === i + 1 ? "bg-violet-600 text-white" : "glass text-white/50 hover:text-white/80"}`}>
+              className={`w-9 h-9 rounded-xl text-sm font-medium transition-all ${page === i + 1 ? "bg-indigo-500 text-white shadow-sm" : "glass text-slate-500 hover:text-slate-700"}`}>
               {i + 1}
             </button>
           ))}
           <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-            className="px-4 py-2 rounded-xl glass text-sm text-white/70 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+            className="px-4 py-2 rounded-xl glass text-sm text-slate-600 hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
             Next
           </button>
         </div>
