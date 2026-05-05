@@ -2,9 +2,11 @@
 
 import { useState, useEffect, use } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import Image from "next/image";
 import Link from "next/link";
 import SaveButton from "@/components/SaveButton";
 import { useSavedColleges } from "@/hooks/useSavedColleges";
+import { getCollegeImage } from "@/lib/collegeImages";
 
 interface Course {
   id: number;
@@ -82,6 +84,31 @@ export default function CollegeDetailPage({ params }: { params: Promise<{ id: st
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
           Back to colleges
         </Link>
+      </motion.div>
+
+      {/* Hero Campus Image */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="relative w-full h-[250px] sm:h-[300px] rounded-3xl overflow-hidden mb-6"
+      >
+        <Image
+          src={getCollegeImage(college.name)}
+          alt={`${college.name} campus`}
+          fill
+          sizes="(max-width: 768px) 100vw, 800px"
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/15 to-transparent" />
+        <div className="absolute bottom-4 left-5 sm:bottom-6 sm:left-7 z-10">
+          <h2 className="text-white text-xl sm:text-2xl font-bold drop-shadow-md">{college.name}</h2>
+          <p className="text-white/80 text-sm drop-shadow-sm flex items-center gap-1.5 mt-1">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            {college.location}
+          </p>
+        </div>
       </motion.div>
 
       {/* Hero */}

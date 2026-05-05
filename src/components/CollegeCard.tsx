@@ -1,7 +1,9 @@
 "use client";
 
 import { motion } from "motion/react";
+import Image from "next/image";
 import { getRecommendationReason, getMatchLabel, findMatchingRule } from "@/lib/predictor";
+import { getCollegeImage } from "@/lib/collegeImages";
 import SaveButton from "./SaveButton";
 import { useSavedColleges } from "@/hooks/useSavedColleges";
 
@@ -35,6 +37,7 @@ export default function CollegeCard({
 }: CollegeCardProps) {
   const rule = findMatchingRule(exam, userRank);
   const { isSaved, toggle } = useSavedColleges();
+  const campusImage = getCollegeImage(college.name);
 
   return (
     <motion.div
@@ -42,104 +45,122 @@ export default function CollegeCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
       whileHover={{ y: -4, scale: 1.02 }}
-      className={`relative glass rounded-2xl p-5 cursor-pointer transition-all duration-300 group ${
+      className={`relative glass rounded-2xl cursor-pointer transition-all duration-300 group overflow-hidden ${
         isSelected
           ? "border-indigo-400/50 bg-indigo-50/30 shadow-lg shadow-indigo-500/5"
           : "glass-hover hover:shadow-lg hover:shadow-slate-200/50"
       }`}
       onClick={() => onViewDetails?.(college.id)}
     >
-      {/* Match Badge */}
-      {rule && userRank > 0 && (
-        <span className="absolute top-3 right-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-[10px] px-2 py-1 rounded-full shadow-sm">
-          {getMatchLabel(userRank, rule)}
-        </span>
-      )}
+      {/* Campus Image */}
+      <div className="relative w-full h-40 overflow-hidden">
+        <Image
+          src={campusImage}
+          alt={`${college.name} campus`}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+          loading="lazy"
+        />
+        {/* Gradient overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
 
-      {/* Header */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex-1 min-w-0">
-          <h3 className="text-slate-900 font-semibold text-base truncate group-hover:text-indigo-600 transition-colors">
-            {college.name}
-          </h3>
-          <p className="text-slate-500 text-sm mt-0.5 flex items-center gap-1">
-            <svg className="w-3.5 h-3.5 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <span className="truncate">{college.location}</span>
-          </p>
-        </div>
+        {/* Match Badge - positioned over image */}
+        {rule && userRank > 0 && (
+          <span className="absolute top-3 right-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-[10px] px-2 py-1 rounded-full shadow-sm z-10">
+            {getMatchLabel(userRank, rule)}
+          </span>
+        )}
 
+        {/* College type badge on image */}
         <span
-          className={`shrink-0 px-2.5 py-1 rounded-lg text-xs font-medium ${
+          className={`absolute top-3 left-3 px-2.5 py-1 rounded-lg text-xs font-medium backdrop-blur-sm z-10 ${
             college.type === "Government"
-              ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
-              : "bg-blue-50 text-blue-600 border border-blue-200"
+              ? "bg-emerald-500/80 text-white"
+              : "bg-blue-500/80 text-white"
           }`}
         >
           {college.type}
         </span>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-3 mb-4">
-        <div className="bg-slate-50/80 rounded-xl p-2.5 text-center">
-          <p className="text-slate-400 text-[10px] uppercase tracking-wider mb-0.5">Rating</p>
-          <p className="text-slate-800 font-semibold text-sm flex items-center justify-center gap-1">
-            ⭐ {college.rating}
-          </p>
+      {/* Content */}
+      <div className="p-5">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-slate-900 font-semibold text-base truncate group-hover:text-indigo-600 transition-colors">
+              {college.name}
+            </h3>
+            <p className="text-slate-500 text-sm mt-0.5 flex items-center gap-1">
+              <svg className="w-3.5 h-3.5 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span className="truncate">{college.location}</span>
+            </p>
+          </div>
         </div>
 
-        <div className="bg-slate-50/80 rounded-xl p-2.5 text-center">
-          <p className="text-slate-400 text-[10px] uppercase tracking-wider mb-0.5">Fees/yr</p>
-          <p className="text-slate-800 font-semibold text-sm">
-            ₹{(college.fees / 100000).toFixed(1)}L
-          </p>
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="bg-slate-50/80 rounded-xl p-2.5 text-center">
+            <p className="text-slate-400 text-[10px] uppercase tracking-wider mb-0.5">Rating</p>
+            <p className="text-slate-800 font-semibold text-sm flex items-center justify-center gap-1">
+              ⭐ {college.rating}
+            </p>
+          </div>
+
+          <div className="bg-slate-50/80 rounded-xl p-2.5 text-center">
+            <p className="text-slate-400 text-[10px] uppercase tracking-wider mb-0.5">Fees/yr</p>
+            <p className="text-slate-800 font-semibold text-sm">
+              ₹{(college.fees / 100000).toFixed(1)}L
+            </p>
+          </div>
+
+          <div className="bg-slate-50/80 rounded-xl p-2.5 text-center">
+            <p className="text-slate-400 text-[10px] uppercase tracking-wider mb-0.5">Placed</p>
+            <p className="text-emerald-600 font-semibold text-sm">
+              {college.placementPercentage}%
+            </p>
+          </div>
         </div>
 
-        <div className="bg-slate-50/80 rounded-xl p-2.5 text-center">
-          <p className="text-slate-400 text-[10px] uppercase tracking-wider mb-0.5">Placed</p>
-          <p className="text-emerald-600 font-semibold text-sm">
-            {college.placementPercentage}%
+        {/* Recommendation Reason */}
+        {rule && userRank > 0 && (
+          <p className="mt-2 text-sm text-slate-500 italic leading-relaxed">
+            {getRecommendationReason(exam, userRank, college, rule)}
           </p>
+        )}
+
+        {/* Actions */}
+        <div className="flex items-center gap-2 mt-4">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewDetails?.(college.id);
+            }}
+            className="flex-1 py-2 px-3 rounded-xl bg-indigo-500 text-white text-xs font-medium hover:bg-indigo-600 active:scale-[0.97] transition-all shadow-sm"
+          >
+            View Details
+          </button>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onCompareToggle?.(college.id);
+            }}
+            className={`py-2 px-3 rounded-xl text-xs font-medium active:scale-[0.97] transition-all border ${
+              isSelected
+                ? "bg-indigo-50 text-indigo-600 border-indigo-200"
+                : "bg-slate-50 text-slate-500 border-slate-200 hover:text-slate-700 hover:bg-slate-100"
+            }`}
+          >
+            {isSelected ? "✓ Added" : "+ Compare"}
+          </button>
+
+          <SaveButton isSaved={isSaved(college.id)} onToggle={() => toggle(college.id)} />
         </div>
-      </div>
-
-      {/* Recommendation Reason */}
-      {rule && userRank > 0 && (
-        <p className="mt-2 text-sm text-slate-500 italic leading-relaxed">
-          {getRecommendationReason(exam, userRank, college, rule)}
-        </p>
-      )}
-
-      {/* Actions */}
-      <div className="flex items-center gap-2 mt-4">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onViewDetails?.(college.id);
-          }}
-          className="flex-1 py-2 px-3 rounded-xl bg-indigo-500 text-white text-xs font-medium hover:bg-indigo-600 active:scale-[0.97] transition-all shadow-sm"
-        >
-          View Details
-        </button>
-
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onCompareToggle?.(college.id);
-          }}
-          className={`py-2 px-3 rounded-xl text-xs font-medium active:scale-[0.97] transition-all border ${
-            isSelected
-              ? "bg-indigo-50 text-indigo-600 border-indigo-200"
-              : "bg-slate-50 text-slate-500 border-slate-200 hover:text-slate-700 hover:bg-slate-100"
-          }`}
-        >
-          {isSelected ? "✓ Added" : "+ Compare"}
-        </button>
-
-        <SaveButton isSaved={isSaved(college.id)} onToggle={() => toggle(college.id)} />
       </div>
     </motion.div>
   );

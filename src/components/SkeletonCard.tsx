@@ -2,7 +2,10 @@
 
 export default function SkeletonCard() {
   return (
-    <div className="glass rounded-2xl p-5 animate-pulse">
+    <div className="glass rounded-2xl overflow-hidden animate-pulse">
+      {/* Image skeleton */}
+      <div className="skeleton h-40 w-full rounded-none" />
+      <div className="p-5">
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <div className="skeleton h-5 w-3/4 mb-2" />
@@ -22,6 +25,7 @@ export default function SkeletonCard() {
         <div className="skeleton h-9 flex-1 rounded-xl" />
         <div className="skeleton h-9 w-24 rounded-xl" />
         <div className="skeleton h-9 w-9 rounded-xl" />
+      </div>
       </div>
     </div>
   );
