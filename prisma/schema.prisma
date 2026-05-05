@@ -19,8 +19,10 @@ model College {
   type                String
   description         String
   imageUrl            String?
+  acceptedExams       String[]
 
   courses             Course[]
+  savedBy             SavedCollege[]
 
   createdAt           DateTime @default(now())
 }
@@ -32,4 +34,24 @@ model Course {
 
   collegeId  Int
   college    College  @relation(fields: [collegeId], references: [id])
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  name          String?
+  email         String         @unique
+  password      String
+  savedColleges SavedCollege[]
+  createdAt     DateTime       @default(now())
+}
+
+model SavedCollege {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  collegeId Int
+  user      User     @relation(fields: [userId], references: [id])
+  college   College  @relation(fields: [collegeId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, collegeId])
 }

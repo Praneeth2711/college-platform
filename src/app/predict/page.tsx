@@ -26,7 +26,7 @@ interface PredictResult {
   };
 }
 
-const exams = ["JEE Advanced", "JEE Main", "BITSAT", "VITEEE", "SRMJEE", "State CET"];
+const exams = ["JEE Advanced", "JEE Main", "BITSAT", "VITEEE", "SRMJEE", "State CET", "NEET", "CAT", "CUET"];
 
 export default function PredictPage() {
   const [exam, setExam] = useState("");

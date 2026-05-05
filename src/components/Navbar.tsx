@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useAuth } from "@/hooks/useAuth";
 
 const navLinks = [
   { href: "/", label: "Discover" },
@@ -14,9 +15,11 @@ const navLinks = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { user, logout, loading: authLoading } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [savedCount, setSavedCount] = useState(0);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -26,6 +29,7 @@ export default function Navbar() {
 
   useEffect(() => {
     setMobileOpen(false);
+    setShowUserMenu(false);
   }, [pathname]);
 
   // Listen for saved colleges count
@@ -105,6 +109,46 @@ export default function Navbar() {
                 </Link>
               );
             })}
+
+            {/* Auth Button */}
+            {!authLoading && (
+              user ? (
+                <div className="relative ml-2">
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold text-sm hover:shadow-md hover:shadow-indigo-500/20 transition-all"
+                  >
+                    {(user.name || user.email)[0].toUpperCase()}
+                  </button>
+                  <AnimatePresence>
+                    {showUserMenu && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 4, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 4, scale: 0.95 }}
+                        className="absolute right-0 top-12 glass-strong rounded-xl p-3 min-w-[180px] shadow-lg"
+                      >
+                        <p className="text-slate-800 text-sm font-medium truncate">{user.name || "User"}</p>
+                        <p className="text-slate-400 text-xs truncate mb-3">{user.email}</p>
+                        <button
+                          onClick={logout}
+                          className="w-full py-2 px-3 rounded-lg bg-slate-50 text-slate-600 text-xs font-medium hover:bg-red-50 hover:text-red-600 transition-colors"
+                        >
+                          Sign out
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="ml-2 px-4 py-2 rounded-xl bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition-colors shadow-sm"
+                >
+                  Login
+                </Link>
+              )
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -113,26 +157,11 @@ export default function Navbar() {
             className="md:hidden p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100/80 transition-colors"
             aria-label="Toggle menu"
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {mobileOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               )}
             </svg>
           </button>
@@ -175,6 +204,20 @@ export default function Navbar() {
                   </Link>
                 );
               })}
+
+              {/* Mobile Auth */}
+              {!authLoading && (
+                user ? (
+                  <div className="px-4 py-2.5 border-t border-slate-100 mt-2 pt-3">
+                    <p className="text-slate-700 text-sm font-medium">{user.name || user.email}</p>
+                    <button onClick={logout} className="text-red-500 text-xs mt-1 hover:underline">Sign out</button>
+                  </div>
+                ) : (
+                  <Link href="/login" className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-indigo-600 bg-indigo-50">
+                    Login / Sign up
+                  </Link>
+                )
+              )}
             </div>
           </motion.div>
         )}

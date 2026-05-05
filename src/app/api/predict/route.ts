@@ -26,9 +26,10 @@ export async function POST(request: Request) {
       });
     }
 
+    // Filter by acceptedExams (the critical fix) + rating threshold
     const colleges = await prisma.college.findMany({
       where: {
-        type: { in: rule.collegeTypes },
+        acceptedExams: { hasSome: rule.acceptedExams },
         rating: { gte: rule.minRating },
         ...(rule.maxFees ? { fees: { lte: rule.maxFees } } : {}),
       },
@@ -42,12 +43,12 @@ export async function POST(request: Request) {
       rank,
       matchedRule: {
         rankRange: `${rule.minRank} - ${rule.maxRank}`,
-        collegeTypes: rule.collegeTypes,
+        acceptedExams: rule.acceptedExams,
         minRating: rule.minRating,
       },
       message:
         colleges.length > 0
-          ? `Found ${colleges.length} colleges matching your profile`
+          ? `Based on your ${exam} rank ${rank}, ${colleges.length} colleges are strong matches considering placement performance and affordability.`
           : "No colleges match this criteria currently",
     });
   } catch (error) {

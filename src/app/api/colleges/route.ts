@@ -55,7 +55,6 @@ export async function GET(request: NextRequest) {
         skip,
         take: limit,
         orderBy: { rating: "desc" },
-        include: { courses: true },
       }),
       prisma.college.count({ where }),
     ]);
